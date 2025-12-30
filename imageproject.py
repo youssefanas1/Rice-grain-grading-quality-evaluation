@@ -15,7 +15,7 @@ def get_classificaton(ratio):
 		toret="Round"
 	toret="("+toret+")"
 	return toret
-#rnjn
+
 print("Starting")
 img = cv2.imread('rice.png',0)#load in greyscale mode
 
@@ -74,3 +74,4 @@ plt.subplot(imgs_row,imgs_col,6),plt.imshow(edges,'gray')
 plt.title("Edge detect")
 
 plt.show()
+
