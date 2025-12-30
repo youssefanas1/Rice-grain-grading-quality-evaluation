@@ -18,8 +18,7 @@ def get_classificaton(ratio):
 
 print("Starting")
 
-# Load image in grayscalee
-
+# Load image in grayscale
 img = cv2.imread('rice.png', 0)
 if img is None:
     print("Error: rice.png not found!")
@@ -61,15 +60,29 @@ contours, hierarchy = cv2.findContours(erosion, cv2.RETR_EXTERNAL, cv2.CHAIN_APP
 
 print("No. of rice grains =", len(contours))
 total_ar = 0
+
+# Count grain types
+
+grain_types = {"Slender":0, "Medium":0, "Bold":0, "Round":0}
+
 for cnt in contours:
     x, y, w, h = cv2.boundingRect(cnt)
     aspect_ratio = float(w)/h
     if aspect_ratio < 1:
         aspect_ratio = 1/aspect_ratio
-    print(round(aspect_ratio, 2), get_classificaton(aspect_ratio))
+    classification = get_classificaton(aspect_ratio).replace("(", "").replace(")", "")
+    grain_types[classification] += 1
+    print(round(aspect_ratio, 2), classification)
     total_ar += aspect_ratio
+
 avg_ar = total_ar / len(contours)
-print("Average Aspect Ratio =", round(avg_ar, 2), get_classificaton(avg_ar))
+avg_classification = get_classificaton(avg_ar).replace("(", "").replace(")", "")
+print("Average Aspect Ratio =", round(avg_ar, 2), avg_classification)
+
+# Print grain type counts
+print("\nGrain type counts:")
+for key, value in grain_types.items():
+    print(f"{key}: {value}")
 
 # Plot all images
 plt.figure(figsize=(15,8))
@@ -101,7 +114,7 @@ plt.axis('off')
 
 plt.subplot(2,4,6)
 plt.imshow(edges, cmap='gray')
-plt.title("Canny (original)")
+plt.title("Canny (dilated)")
 plt.axis('off')
 
 plt.subplot(2,4,7)
@@ -116,3 +129,14 @@ plt.axis('off')
 
 plt.tight_layout()
 plt.show()
+
+# plot grain type counts
+
+plt.figure(figsize=(6,4))
+plt.bar(grain_types.keys(), grain_types.values(), color=['green','orange','blue','red'])
+plt.title("Number of Rice Grains by Type")
+plt.xlabel("Grain Type")
+plt.ylabel("Count")
+plt.show()
+    
+
